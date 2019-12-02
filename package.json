@@ -2,7 +2,7 @@
   "name": "timer-countdown",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://taitomi.github.io/timer_countdown",
+  "homepage": "https://taitomi.github.io/aviasales",
   "dependencies": {
     "antd": "^3.25.2",
     "node-sass": "^4.13.0",
