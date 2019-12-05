@@ -5,45 +5,82 @@ import Input from './Input';
 import Label from './Label';
 import Title from './Title';
 
-const Filter = ({ className, checkboxHandler }) => {
+const Filter = ({ className, checkboxHandler, filter }) => {
   return (
     <section className={className}>
       <Title>количество пересадок</Title>
       <Label>
-        <Input checkboxHandler={checkboxHandler('all')} />
+        <Input checkState={filter.all} checkboxHandler={checkboxHandler('all')} />
         Все
       </Label>
       <Label>
-        <Input checkboxHandler={checkboxHandler('widhoutTransplant')} />
+        <Input
+          checkState={filter.withoutTransplant}
+          filter={filter}
+          checkboxHandler={checkboxHandler('widhoutTransplant')}
+        />
+        Без пересадок
       </Label>
       <Label>
-        <Input checkboxHandler={checkboxHandler('oneTransplant')} />
+        <Input
+          checkState={filter.oneTransplant}
+          filter={filter}
+          checkboxHandler={checkboxHandler('oneTransplant')}
+        />
+        1 пересадка
       </Label>
       <Label>
-        <Input checkboxHandler={checkboxHandler('twoTransplant')} />
+        <Input
+          checkState={filter.twoTransplant}
+          filter={filter}
+          checkboxHandler={checkboxHandler('twoTransplant')}
+        />
+        2 пересадки
       </Label>
       <Label>
-        <Input checkboxHandler={checkboxHandler('threeTransplant')} />
+        <Input
+          checkState={filter.threeTransplant}
+          filter={filter}
+          checkboxHandler={checkboxHandler('threeTransplant')}
+        />
+        3 пересадки
       </Label>
     </section>
   );
 };
 
 export default styled(Filter)`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   width: 232px;
   height: 252;
   background-color: #fff;
   border: 1px solid red;
   color: #4a4a4a;
-  padding: 20px;
+  padding: 13px;
 `;
 
 Filter.defaultProps = {
   className: '',
   checkboxHandler: null,
+  filter: {
+    all: false,
+    withoutTransplant: false,
+    oneTransplant: false,
+    twoTransplant: false,
+    threeTransplant: false,
+  },
 };
 
 Filter.propTypes = {
+  filter: PropTypes.shape({
+    all: PropTypes.bool,
+    withoutTransplant: PropTypes.bool,
+    oneTransplant: PropTypes.bool,
+    twoTransplant: PropTypes.bool,
+    threeTransplant: PropTypes.bool,
+  }),
   className: PropTypes.string,
   checkboxHandler: PropTypes.func,
 };

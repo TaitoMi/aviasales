@@ -11,6 +11,9 @@ const GlobalStyle = createGlobalStyle`
 	body {
 		font-family: 'Open Sans';
 	}
+	* {
+		box-sizing: border-box;
+	}
 `;
 
 class App extends React.Component {
@@ -29,27 +32,23 @@ class App extends React.Component {
   }
 
   checkboxHandler = type => () => {
-    const {
-      filterState: { [type]: field },
-    } = this.state;
-    this.setState({ filterState: { [type]: !field } });
+    const { filterState } = this.state;
+    const newFilterState = filterState;
+    newFilterState[type] = !newFilterState[type];
+    this.setState({ filterState: newFilterState });
   };
 
   render() {
     const { filterState, gettedTickets } = this.state;
-    const ttt = (
-      <div>
-        {filterState.all.toString()} && {gettedTickets.toString()}
-      </div>
-    );
+    console.log(gettedTickets);
     return (
       <>
         <GlobalStyle />
         <ContainerFluid>
           <LogoLink />
-          {ttt}
+          {/* {ttt.toString()} */}
           <Content>
-            <Filter checkboxHandler={this.checkboxHandler} />
+            <Filter checkboxHandler={this.checkboxHandler} filter={filterState} />
           </Content>
         </ContainerFluid>
       </>

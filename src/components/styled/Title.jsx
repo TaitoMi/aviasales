@@ -6,4 +6,5 @@ export default styled.h1`
   line-height: 20px;
   margin: 0;
   padding: 0;
+  /* padding-bottom: 20px; */
 `;
