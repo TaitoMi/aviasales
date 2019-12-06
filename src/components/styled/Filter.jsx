@@ -16,15 +16,13 @@ const Filter = ({ className, checkboxHandler, filter }) => {
       <Label>
         <Input
           checkState={filter.withoutTransplant}
-          filter={filter}
-          checkboxHandler={checkboxHandler('widhoutTransplant')}
+          checkboxHandler={checkboxHandler('withoutTransplant')}
         />
         Без пересадок
       </Label>
       <Label>
         <Input
           checkState={filter.oneTransplant}
-          filter={filter}
           checkboxHandler={checkboxHandler('oneTransplant')}
         />
         1 пересадка
@@ -32,7 +30,6 @@ const Filter = ({ className, checkboxHandler, filter }) => {
       <Label>
         <Input
           checkState={filter.twoTransplant}
-          filter={filter}
           checkboxHandler={checkboxHandler('twoTransplant')}
         />
         2 пересадки
@@ -40,7 +37,6 @@ const Filter = ({ className, checkboxHandler, filter }) => {
       <Label>
         <Input
           checkState={filter.threeTransplant}
-          filter={filter}
           checkboxHandler={checkboxHandler('threeTransplant')}
         />
         3 пересадки
@@ -54,11 +50,12 @@ export default styled(Filter)`
   flex-direction: column;
   align-items: flex-start;
   width: 232px;
-  height: 252;
+  height: 252px;
   background-color: #fff;
-  border: 1px solid red;
   color: #4a4a4a;
-  padding: 13px;
+  padding: 20px 0;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
 `;
 
 Filter.defaultProps = {

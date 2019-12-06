@@ -8,4 +8,9 @@ export default styled.label`
   height: 40px;
   cursor: pointer;
   width: 100%;
+  transition: all 0.3s ease;
+  padding-left: 20px;
+  &:hover {
+    background: #f1fcff;
+  }
 `;

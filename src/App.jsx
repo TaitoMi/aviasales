@@ -5,6 +5,9 @@ import ContainerFluid from './components/styled/ContainerFluid';
 import LogoLink from './components/styled/LogoLink';
 import Filter from './components/styled/Filter';
 import Content from './components/styled/Content';
+import RightSide from './components/styled/RightSide';
+import SortButtons from './components/styled/SortButtons';
+import SortButton from './components/styled/SortButton';
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
@@ -49,6 +52,12 @@ class App extends React.Component {
           {/* {ttt.toString()} */}
           <Content>
             <Filter checkboxHandler={this.checkboxHandler} filter={filterState} />
+            <RightSide>
+              <SortButtons>
+                <SortButton left>самый дешевый</SortButton>
+                <SortButton rigth>самый быстрый</SortButton>
+              </SortButtons>
+            </RightSide>
           </Content>
         </ContainerFluid>
       </>
