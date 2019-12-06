@@ -1,13 +1,15 @@
 import React from 'react';
 import 'normalize.css';
 import { createGlobalStyle } from 'styled-components';
+import axios from 'axios';
 import ContainerFluid from './components/styled/ContainerFluid';
 import LogoLink from './components/styled/LogoLink';
 import Filter from './components/styled/Filter';
 import Content from './components/styled/Content';
 import RightSide from './components/styled/RightSide';
 import SortButtons from './components/styled/SortButtons';
-import SortButton from './components/styled/SortButton';
+import RightSortButton, { SortButton } from './components/styled/SortButton';
+import Tickets from './components/styled/Tickets';
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
@@ -30,9 +32,32 @@ class App extends React.Component {
         twoTransplant: false,
         threeTransplant: false,
       },
-      gettedTickets: [],
+      tickets: [],
+      leftTab: true,
     };
   }
+
+  componentDidMount() {
+    this.setState({ tickets: this.getTickets() });
+  }
+
+  getTickets = async () => {
+    const id = await axios.get('https://front-test.beta.aviasales.ru/search');
+    const tickets = await axios.get(
+      `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
+    );
+    return tickets.data.tickets;
+  };
+
+  toggleTabs = side => event => {
+    event.preventDefault();
+    if (side === 'left') {
+      this.setState({ leftTab: true });
+    }
+    if (side === 'right') {
+      this.setState({ leftTab: false });
+    }
+  };
 
   checkboxHandler = type => () => {
     const { filterState } = this.state;
@@ -42,21 +67,27 @@ class App extends React.Component {
   };
 
   render() {
-    const { filterState, gettedTickets } = this.state;
-    console.log(gettedTickets);
+    const { filterState, leftTab, tickets } = this.state;
     return (
       <>
         <GlobalStyle />
         <ContainerFluid>
           <LogoLink />
-          {/* {ttt.toString()} */}
           <Content>
             <Filter checkboxHandler={this.checkboxHandler} filter={filterState} />
             <RightSide>
               <SortButtons>
-                <SortButton left>самый дешевый</SortButton>
-                <SortButton rigth>самый быстрый</SortButton>
+                <SortButton changer={this.toggleTabs('left')} isActive={leftTab} left>
+                  самый дешевый
+                  {tickets.map(el => (
+                    <div>{el}</div>
+                  ))}
+                </SortButton>
+                <RightSortButton changer={this.toggleTabs('right')} isActive={leftTab} right>
+                  самый быстрый
+                </RightSortButton>
               </SortButtons>
+              <Tickets />
             </RightSide>
           </Content>
         </ContainerFluid>
