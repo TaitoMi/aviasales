@@ -10,6 +10,7 @@ import RightSide from './components/styled/RightSide';
 import SortButtons from './components/styled/SortButtons';
 import RightSortButton, { SortButton } from './components/styled/SortButton';
 import Tickets from './components/styled/Tickets';
+import Ticket from './components/styled/Ticket';
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
@@ -38,15 +39,15 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ tickets: this.getTickets() });
+    this.getTickets().then(res => this.setState({ tickets: res }));
   }
 
   getTickets = async () => {
     const id = await axios.get('https://front-test.beta.aviasales.ru/search');
-    const tickets = await axios.get(
+    const gettedTickets = await axios.get(
       `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
     );
-    return tickets.data.tickets;
+    return gettedTickets.data.tickets;
   };
 
   toggleTabs = side => event => {
@@ -79,15 +80,16 @@ class App extends React.Component {
               <SortButtons>
                 <SortButton changer={this.toggleTabs('left')} isActive={leftTab} left>
                   самый дешевый
-                  {tickets.map(el => (
-                    <div>{el}</div>
-                  ))}
                 </SortButton>
                 <RightSortButton changer={this.toggleTabs('right')} isActive={leftTab} right>
                   самый быстрый
                 </RightSortButton>
               </SortButtons>
-              <Tickets />
+              <Tickets>
+                {tickets.length > 0 ? (
+                  <Ticket price={tickets[0].price} carrier={tickets[0].carrier} />
+                ) : null}
+              </Tickets>
             </RightSide>
           </Content>
         </ContainerFluid>
