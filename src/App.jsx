@@ -34,13 +34,41 @@ class App extends React.Component {
         threeTransplant: false,
       },
       tickets: [],
+      filtered: [],
+      // sorted: [],
       leftTab: true,
+      filtToInt: {
+        withoutTransplant: 0,
+        oneTransplant: 1,
+        twoTransplant: 2,
+        threeTransplant: 3,
+      },
     };
   }
 
   componentDidMount() {
-    this.getTickets().then(res => this.setState({ tickets: res }));
+    this.getTickets().then(res =>
+      this.setState({ tickets: res }, () => {
+        this.toFilter();
+        // const { tickets } = this.state;
+        // const sorted = tickets.sort((a, b) => {
+        //   return a.price - b.price;
+        // });
+        // this.setState({ sorted });
+      })
+    );
   }
+
+  toFilter = filt => {
+    const { tickets, filterState, filtToInt } = this.state;
+    const values = Object.values(filterState);
+    if (values.every(el => el === false) || filterState.all === true) {
+      this.setState({ filtered: tickets });
+      return;
+    }
+    const filteredArr = tickets.filter(el => el.segments[0].stops.length === filtToInt[filt]);
+    this.setState({ filtered: [...filteredArr] });
+  };
 
   getTickets = async () => {
     const id = await axios.get('https://front-test.beta.aviasales.ru/search');
@@ -65,14 +93,11 @@ class App extends React.Component {
     const newFilterState = filterState;
     newFilterState[type] = !newFilterState[type];
     this.setState({ filterState: newFilterState });
+    this.toFilter(type);
   };
 
   render() {
-    const { filterState, leftTab, tickets } = this.state;
-    const check = () => {
-      if (tickets.length > 0) console.log(tickets[0]);
-    };
-    check();
+    const { filterState, leftTab, filtered } = this.state;
     return (
       <>
         <GlobalStyle />
@@ -90,13 +115,13 @@ class App extends React.Component {
                 </RightSortButton>
               </SortButtons>
               <Tickets>
-                {tickets.length > 0 ? (
-                  <Ticket
-                    price={tickets[0].price}
-                    carrier={tickets[0].carrier}
-                    segments={tickets[0].segments}
-                  />
-                ) : null}
+                {filtered.length > 0
+                  ? filtered.map(el => {
+                      return (
+                        <Ticket price={el.price} carrier={el.carrier} segments={el.segments} />
+                      );
+                    })
+                  : null}
               </Tickets>
             </RightSide>
           </Content>
