@@ -69,6 +69,10 @@ class App extends React.Component {
 
   render() {
     const { filterState, leftTab, tickets } = this.state;
+    const check = () => {
+      if (tickets.length > 0) console.log(tickets[0]);
+    };
+    check();
     return (
       <>
         <GlobalStyle />
@@ -87,7 +91,11 @@ class App extends React.Component {
               </SortButtons>
               <Tickets>
                 {tickets.length > 0 ? (
-                  <Ticket price={tickets[0].price} carrier={tickets[0].carrier} />
+                  <Ticket
+                    price={tickets[0].price}
+                    carrier={tickets[0].carrier}
+                    segments={tickets[0].segments}
+                  />
                 ) : null}
               </Tickets>
             </RightSide>
