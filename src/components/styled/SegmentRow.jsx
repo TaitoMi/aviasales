@@ -15,7 +15,6 @@ const Segment = ({ className, origin, destination, date, stops, duration }) => {
   return (
     <div className={className}>
       <Column>
-        {/* {stops[0]} */}
         <TopPart>{fromTo}</TopPart>
         <BottomPart>
           {fromTime} – {toTimeHours.toString().padStart(2, '0')}:

@@ -13,4 +13,9 @@ export default styled.label`
   &:hover {
     background: #f1fcff;
   }
+  @media screen and (max-width: 769px) {
+    font-size: 25px;
+    height: 70px;
+    padding-left: 33px;
+  }
 `;

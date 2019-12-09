@@ -10,6 +10,10 @@ const Carrier = ({ className, carrier }) => {
 export default styled(Carrier)`
   width: 110px;
   height: 36px;
+  @media screen and (max-width: 769px) {
+    width: 220px;
+    height: 72px;
+  }
 `;
 
 Carrier.defaultProps = {

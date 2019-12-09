@@ -7,4 +7,9 @@ export default styled.h1`
   margin: 0;
   padding: 0;
   padding-left: 20px;
+  @media screen and (max-width: 769px) {
+    font-size: 25px;
+    line-height: 35px;
+    white-space: nowrap;
+  }
 `;

@@ -41,6 +41,13 @@ export default styled(Input)`
     border-left: 2px solid #2196f3;
     border-bottom: 2px solid #2196f3;
   }
+  @media screen and (max-width: 769px) {
+    margin-right: 25px;
+    &::before {
+      width: 40px;
+      height: 40px;
+    }
+  }
 `;
 
 Input.defaultProps = {

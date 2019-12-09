@@ -29,6 +29,11 @@ export const SortButton = styled(SortBtn)`
   height: 50px;
   color: ${({ isActive }) => (isActive ? '#FFFFFF' : '#4A4A4A')};
   text-transform: uppercase;
+  @media screen and (max-width: 769px) {
+    font-size: 25px;
+    height: 70px;
+    width: 50%;
+  }
 `;
 
 export default styled(SortButton)`

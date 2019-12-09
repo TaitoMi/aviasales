@@ -50,12 +50,22 @@ export default styled(Filter)`
   flex-direction: column;
   align-items: flex-start;
   width: 232px;
-  height: 252px;
+  min-height: 252px;
   background-color: #fff;
   color: #4a4a4a;
   padding: 20px 0;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
+  transition: all 0.3s ease;
+  @media screen and (max-width: 769px) {
+    z-index: 11;
+    position: fixed;
+    min-width: 400px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: ${({ isMobile }) => (isMobile ? '20vh' : '-50vh')};
+    box-shadow: 0px 2px 18px 0px black;
+  }
 `;
 
 Filter.defaultProps = {

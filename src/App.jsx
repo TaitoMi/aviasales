@@ -11,6 +11,7 @@ import SortButtons from './components/styled/SortButtons';
 import RightSortButton, { SortButton } from './components/styled/SortButton';
 import Tickets from './components/styled/Tickets';
 import Ticket from './components/styled/Ticket';
+import FilterButton from './components/styled/FilterButton';
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
@@ -37,6 +38,7 @@ class App extends React.Component {
       filtered: [],
       sorted: [],
       leftTab: true,
+      isMobile: false,
     };
   }
 
@@ -50,21 +52,25 @@ class App extends React.Component {
 
   toSort = (left = true) => {
     const { filtered } = this.state;
-    const sorted = filtered.sort((a, b) => {
-      if (left === true) return a.price - b.price;
-      return a.price - b.price;
-    });
-    this.setState({ sorted }, () => {
-      console.log(sorted);
-    });
+    let sorted = [];
+    if (left) {
+      sorted = filtered.sort((a, b) => {
+        return a.price - b.price;
+      });
+    } else {
+      sorted = filtered.sort((a, b) => {
+        return a.segments[0].duration - b.segments[0].duration;
+      });
+    }
+    this.setState({ sorted });
   };
 
   toFilter = () => {
-    const { tickets, filterState } = this.state;
+    const { tickets, filterState, leftTab } = this.state;
     const values = Object.values(filterState);
     if (values.every(el => el === false) || filterState.all === true) {
       this.setState({ filtered: tickets }, () => {
-        this.toSort(true);
+        this.toSort(leftTab);
       });
       return;
     }
@@ -84,9 +90,12 @@ class App extends React.Component {
     if (filterState.threeTransplant) {
       threeTransplant = tickets.filter(el => el.segments[0].stops.length === 3);
     }
-    this.setState({
-      filtered: [...without, ...oneTransplant, ...twoTransplant, ...threeTransplant],
-    });
+    this.setState(
+      {
+        filtered: [...without, ...oneTransplant, ...twoTransplant, ...threeTransplant],
+      },
+      () => this.toSort(leftTab)
+    );
   };
 
   getTickets = async () => {
@@ -101,42 +110,57 @@ class App extends React.Component {
     event.preventDefault();
     if (side === 'left') {
       this.setState({ leftTab: true });
+      this.toSort(true);
     }
     if (side === 'right') {
       this.setState({ leftTab: false });
+      this.toSort(false);
     }
+  };
+
+  showFilter = event => {
+    event.preventDefault();
+    const { isMobile } = this.state;
+    console.log(isMobile);
+    this.setState({ isMobile: !isMobile });
   };
 
   checkboxHandler = type => () => {
     const { filterState } = this.state;
     if (type === 'all') {
       const boolToggle = !filterState.all;
-      this.setState({
-        filterState: {
-          all: boolToggle,
-          withoutTransplant: boolToggle,
-          oneTransplant: boolToggle,
-          twoTransplant: boolToggle,
-          threeTransplant: boolToggle,
+      this.setState(
+        {
+          filterState: {
+            all: boolToggle,
+            withoutTransplant: boolToggle,
+            oneTransplant: boolToggle,
+            twoTransplant: boolToggle,
+            threeTransplant: boolToggle,
+          },
         },
-      });
+        () => this.toFilter()
+      );
       return;
     }
     const newFilterState = filterState;
     newFilterState[type] = !newFilterState[type];
-    this.setState({ filterState: newFilterState });
-    this.toFilter();
+    this.setState({ filterState: newFilterState }, () => this.toFilter());
   };
 
   render() {
-    const { filterState, leftTab, sorted } = this.state;
+    const { filterState, leftTab, sorted, isMobile } = this.state;
     return (
       <>
         <GlobalStyle />
         <ContainerFluid>
           <LogoLink />
           <Content>
-            <Filter checkboxHandler={this.checkboxHandler} filter={filterState} />
+            <Filter
+              checkboxHandler={this.checkboxHandler}
+              filter={filterState}
+              isMobile={isMobile}
+            />
             <RightSide>
               <SortButtons>
                 <SortButton changer={this.toggleTabs('left')} isActive={leftTab} left>
@@ -150,12 +174,18 @@ class App extends React.Component {
                 {sorted.length > 0
                   ? sorted.slice(0, 5).map(el => {
                       return (
-                        <Ticket price={el.price} carrier={el.carrier} segments={el.segments} />
+                        <Ticket
+                          key={`ticket-${Math.random()}`}
+                          price={el.price}
+                          carrier={el.carrier}
+                          segments={el.segments}
+                        />
                       );
                     })
                   : null}
               </Tickets>
             </RightSide>
+            <FilterButton filterShow={this.showFilter}>Фильтры</FilterButton>
           </Content>
         </ContainerFluid>
       </>

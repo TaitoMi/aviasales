@@ -9,6 +9,9 @@ export default styled.div`
   &:last-child {
     margin-right: 0px;
   }
+  @media screen and (max-width: 769px) {
+    width: auto;
+  }
 `;
 
 export const TopPart = styled.span`
@@ -17,6 +20,9 @@ export const TopPart = styled.span`
   color: #a0b0b9;
   font-weight: 600;
   margin-top: 15px;
+  @media screen and (max-width: 769px) {
+    font-size: 20px;
+  }
 `;
 
 export const BottomPart = styled.span`
@@ -24,4 +30,7 @@ export const BottomPart = styled.span`
   font-weight: 600;
   margin-top: 5px;
   color: #4a4a4a;
+  @media screen and (max-width: 769px) {
+    font-size: 22px;
+  }
 `;
