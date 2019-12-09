@@ -41,6 +41,7 @@ const Ticket = ({ className, price, carrier, segments }) => {
 };
 
 export default styled(Ticket)`
+  margin-top: 20px;
   background-color: #fff;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 5px;

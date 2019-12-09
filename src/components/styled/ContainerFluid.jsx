@@ -6,6 +6,6 @@ export default styled.main`
   align-items: center;
   background: #f3f7fa;
   width: 100vw;
-  height: 100vh;
-  padding-top: 40px;
+  min-height: 101vh;
+  padding: 40px 0;
 `;

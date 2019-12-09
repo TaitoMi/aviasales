@@ -35,14 +35,8 @@ class App extends React.Component {
       },
       tickets: [],
       filtered: [],
-      // sorted: [],
+      sorted: [],
       leftTab: true,
-      filtToInt: {
-        withoutTransplant: 0,
-        oneTransplant: 1,
-        twoTransplant: 2,
-        threeTransplant: 3,
-      },
     };
   }
 
@@ -50,24 +44,49 @@ class App extends React.Component {
     this.getTickets().then(res =>
       this.setState({ tickets: res }, () => {
         this.toFilter();
-        // const { tickets } = this.state;
-        // const sorted = tickets.sort((a, b) => {
-        //   return a.price - b.price;
-        // });
-        // this.setState({ sorted });
       })
     );
   }
 
-  toFilter = filt => {
-    const { tickets, filterState, filtToInt } = this.state;
+  toSort = (left = true) => {
+    const { filtered } = this.state;
+    const sorted = filtered.sort((a, b) => {
+      if (left === true) return a.price - b.price;
+      return a.price - b.price;
+    });
+    this.setState({ sorted }, () => {
+      console.log(sorted);
+    });
+  };
+
+  toFilter = () => {
+    const { tickets, filterState } = this.state;
     const values = Object.values(filterState);
     if (values.every(el => el === false) || filterState.all === true) {
-      this.setState({ filtered: tickets });
+      this.setState({ filtered: tickets }, () => {
+        this.toSort(true);
+      });
       return;
     }
-    const filteredArr = tickets.filter(el => el.segments[0].stops.length === filtToInt[filt]);
-    this.setState({ filtered: [...filteredArr] });
+    let without = [];
+    let oneTransplant = [];
+    let twoTransplant = [];
+    let threeTransplant = [];
+    if (filterState.withoutTransplant) {
+      without = tickets.filter(el => el.segments[0].stops.length === 0);
+    }
+    if (filterState.oneTransplant) {
+      oneTransplant = tickets.filter(el => el.segments[0].stops.length === 1);
+    }
+    if (filterState.twoTransplant) {
+      twoTransplant = tickets.filter(el => el.segments[0].stops.length === 2);
+    }
+    if (filterState.threeTransplant) {
+      threeTransplant = tickets.filter(el => el.segments[0].stops.length === 3);
+    }
+    this.setState({
+      filtered: [...without, ...oneTransplant, ...twoTransplant, ...threeTransplant],
+    });
   };
 
   getTickets = async () => {
@@ -90,14 +109,27 @@ class App extends React.Component {
 
   checkboxHandler = type => () => {
     const { filterState } = this.state;
+    if (type === 'all') {
+      const boolToggle = !filterState.all;
+      this.setState({
+        filterState: {
+          all: boolToggle,
+          withoutTransplant: boolToggle,
+          oneTransplant: boolToggle,
+          twoTransplant: boolToggle,
+          threeTransplant: boolToggle,
+        },
+      });
+      return;
+    }
     const newFilterState = filterState;
     newFilterState[type] = !newFilterState[type];
     this.setState({ filterState: newFilterState });
-    this.toFilter(type);
+    this.toFilter();
   };
 
   render() {
-    const { filterState, leftTab, filtered } = this.state;
+    const { filterState, leftTab, sorted } = this.state;
     return (
       <>
         <GlobalStyle />
@@ -115,8 +147,8 @@ class App extends React.Component {
                 </RightSortButton>
               </SortButtons>
               <Tickets>
-                {filtered.length > 0
-                  ? filtered.map(el => {
+                {sorted.length > 0
+                  ? sorted.slice(0, 5).map(el => {
                       return (
                         <Ticket price={el.price} carrier={el.carrier} segments={el.segments} />
                       );
