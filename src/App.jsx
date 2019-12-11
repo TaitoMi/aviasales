@@ -43,11 +43,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.getTickets().then(res =>
-      this.setState({ tickets: res }, () => {
-        this.toFilter();
-      })
-    );
+    this.getTickets();
   }
 
   toSort = (left = true) => {
@@ -100,10 +96,28 @@ class App extends React.Component {
 
   getTickets = async () => {
     const id = await axios.get('https://front-test.beta.aviasales.ru/search');
-    const gettedTickets = await axios.get(
-      `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
-    );
-    return gettedTickets.data.tickets;
+    const recursion = async (stop = false) => {
+      if (stop) {
+        this.toFilter();
+        return;
+      }
+      const { tickets } = this.state;
+      let newTickets;
+      try {
+        newTickets = await axios.get(
+          `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
+        );
+      } catch (e) {
+        newTickets = await axios.get(
+          `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
+        );
+      }
+      this.setState({ tickets: [...tickets, ...newTickets.data.tickets] }, () => {
+        this.toFilter();
+        recursion(newTickets.data.stop);
+      });
+    };
+    return recursion(false);
   };
 
   toggleTabs = side => event => {
@@ -121,7 +135,6 @@ class App extends React.Component {
   showFilter = event => {
     event.preventDefault();
     const { isMobile } = this.state;
-    console.log(isMobile);
     this.setState({ isMobile: !isMobile });
   };
 
@@ -145,6 +158,9 @@ class App extends React.Component {
     }
     const newFilterState = filterState;
     newFilterState[type] = !newFilterState[type];
+    const values = Object.values(newFilterState);
+    const all = values.slice(1).some(el => el === true) ? false : newFilterState.all;
+    newFilterState.all = all;
     this.setState({ filterState: newFilterState }, () => this.toFilter());
   };
 

@@ -50,7 +50,7 @@ export default styled(Filter)`
   flex-direction: column;
   align-items: flex-start;
   width: 232px;
-  min-height: 252px;
+  height: 252px;
   background-color: #fff;
   color: #4a4a4a;
   padding: 20px 0;
@@ -61,9 +61,10 @@ export default styled(Filter)`
     z-index: 11;
     position: fixed;
     min-width: 400px;
+    min-height: 404px;
     left: 50%;
     transform: translateX(-50%);
-    bottom: ${({ isMobile }) => (isMobile ? '20vh' : '-50vh')};
+    bottom: ${({ isMobile }) => (isMobile ? '20vh' : '-100vh')};
     box-shadow: 0px 2px 18px 0px black;
   }
 `;
