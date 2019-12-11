@@ -2,6 +2,8 @@ import React from 'react';
 import 'normalize.css';
 import { createGlobalStyle } from 'styled-components';
 import axios from 'axios';
+import { Spin } from 'antd';
+import 'antd/dist/antd.css';
 import ContainerFluid from './components/styled/ContainerFluid';
 import LogoLink from './components/styled/LogoLink';
 import Filter from './components/styled/Filter';
@@ -187,18 +189,20 @@ class App extends React.Component {
                 </RightSortButton>
               </SortButtons>
               <Tickets>
-                {sorted.length > 0
-                  ? sorted.slice(0, 5).map(el => {
-                      return (
-                        <Ticket
-                          key={`ticket-${Math.random()}`}
-                          price={el.price}
-                          carrier={el.carrier}
-                          segments={el.segments}
-                        />
-                      );
-                    })
-                  : null}
+                {sorted.length > 0 ? (
+                  sorted.slice(0, 5).map(el => {
+                    return (
+                      <Ticket
+                        key={`ticket-${Math.random()}`}
+                        price={el.price}
+                        carrier={el.carrier}
+                        segments={el.segments}
+                      />
+                    );
+                  })
+                ) : (
+                  <Spin tip="Билеты загружаются ..." size="large" />
+                )}
               </Tickets>
             </RightSide>
             <FilterButton filterShow={this.showFilter}>Фильтры</FilterButton>
