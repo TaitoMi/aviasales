@@ -6,7 +6,7 @@ export default styled.div`
   width: 960px;
   padding: 25px 90px 0;
   @media screen and (max-width: 769px) {
-    width: 100vw;
+    width: 100%;
     padding: 25px;
   }
 `;

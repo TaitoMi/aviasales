@@ -64,7 +64,8 @@ export default styled(Filter)`
     min-height: 404px;
     left: 50%;
     transform: translateX(-50%);
-    bottom: ${({ isMobile }) => (isMobile ? '20vh' : '-100vh')};
+    display: ${({ isMobile }) => (isMobile ? 'block' : 'none')};
+    bottom: 20%;
     box-shadow: 0px 2px 18px 0px black;
   }
 `;

@@ -25,7 +25,7 @@ export default styled(Btn)`
   letter-spacing: 2.5px;
   cursor: pointer;
   left: 50%;
-  bottom: -40vh;
+  display: none;
   transform: translateX(-50%);
   &:hover {
     border: 1px solid #2196f3;
@@ -33,6 +33,7 @@ export default styled(Btn)`
     background: #fff;
   }
   @media screen and (max-width: 769px) {
+    display: block;
     bottom: 4vh;
   }
 `;

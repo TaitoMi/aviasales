@@ -38,8 +38,7 @@ class App extends React.Component {
       },
       tickets: [],
       filtered: [],
-      sorted: [],
-      leftTab: true,
+      mostInexpensive: true,
       isMobile: false,
     };
   }
@@ -48,51 +47,42 @@ class App extends React.Component {
     this.getTickets();
   }
 
-  toSort = (left = true) => {
+  getSorted = (inexpensive = true) => {
     const { filtered } = this.state;
     let sorted = [];
-    if (left) {
-      sorted = filtered.sort((a, b) => {
-        return a.price - b.price;
+    if (inexpensive) {
+      sorted = filtered.sort((first, second) => {
+        return first.price - second.price;
       });
     } else {
-      sorted = filtered.sort((a, b) => {
-        return a.segments[0].duration - b.segments[0].duration;
+      sorted = filtered.sort((first, second) => {
+        return first.segments[0].duration - second.segments[0].duration;
       });
     }
-    this.setState({ sorted });
+    this.setState({ filtered: sorted });
   };
 
-  toFilter = () => {
-    const { tickets, filterState, leftTab } = this.state;
+  getFiltered = () => {
+    const { tickets, filterState, mostInexpensive } = this.state;
     const values = Object.values(filterState);
     if (values.every(el => el === false) || filterState.all === true) {
       this.setState({ filtered: tickets }, () => {
-        this.toSort(leftTab);
+        this.getSorted(mostInexpensive);
       });
       return;
     }
-    let without = [];
-    let oneTransplant = [];
-    let twoTransplant = [];
-    let threeTransplant = [];
-    if (filterState.withoutTransplant) {
-      without = tickets.filter(el => el.segments[0].stops.length === 0);
-    }
-    if (filterState.oneTransplant) {
-      oneTransplant = tickets.filter(el => el.segments[0].stops.length === 1);
-    }
-    if (filterState.twoTransplant) {
-      twoTransplant = tickets.filter(el => el.segments[0].stops.length === 2);
-    }
-    if (filterState.threeTransplant) {
-      threeTransplant = tickets.filter(el => el.segments[0].stops.length === 3);
-    }
+    let filtered = [];
+    values.slice(1).forEach((el, i) => {
+      if (el) {
+        const newArr = tickets.filter(ticket => ticket.segments[0].stops.length === i);
+        filtered = [...filtered, ...newArr];
+      }
+    });
     this.setState(
       {
-        filtered: [...without, ...oneTransplant, ...twoTransplant, ...threeTransplant],
+        filtered: [...filtered],
       },
-      () => this.toSort(leftTab)
+      () => this.getSorted(mostInexpensive)
     );
   };
 
@@ -100,7 +90,7 @@ class App extends React.Component {
     const id = await axios.get('https://front-test.beta.aviasales.ru/search');
     const recursion = async (stop = false) => {
       if (stop) {
-        this.toFilter();
+        this.getFiltered();
         return;
       }
       const { tickets } = this.state;
@@ -109,13 +99,12 @@ class App extends React.Component {
         newTickets = await axios.get(
           `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
         );
-      } catch (e) {
-        newTickets = await axios.get(
-          `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
-        );
+      } catch (err) {
+        recursion(false);
+        return;
       }
       this.setState({ tickets: [...tickets, ...newTickets.data.tickets] }, () => {
-        this.toFilter();
+        this.getFiltered();
         recursion(newTickets.data.stop);
       });
     };
@@ -125,12 +114,12 @@ class App extends React.Component {
   toggleTabs = side => event => {
     event.preventDefault();
     if (side === 'left') {
-      this.setState({ leftTab: true });
-      this.toSort(true);
+      this.setState({ mostInexpensive: true });
+      this.getSorted(true);
     }
     if (side === 'right') {
-      this.setState({ leftTab: false });
-      this.toSort(false);
+      this.setState({ mostInexpensive: false });
+      this.getSorted(false);
     }
   };
 
@@ -154,7 +143,7 @@ class App extends React.Component {
             threeTransplant: boolToggle,
           },
         },
-        () => this.toFilter()
+        () => this.getFiltered()
       );
       return;
     }
@@ -163,11 +152,11 @@ class App extends React.Component {
     const values = Object.values(newFilterState);
     const all = values.slice(1).some(el => el === true) ? false : newFilterState.all;
     newFilterState.all = all;
-    this.setState({ filterState: newFilterState }, () => this.toFilter());
+    this.setState({ filterState: newFilterState }, () => this.getFiltered());
   };
 
   render() {
-    const { filterState, leftTab, sorted, isMobile } = this.state;
+    const { filterState, mostInexpensive, filtered, isMobile } = this.state;
     return (
       <>
         <GlobalStyle />
@@ -181,16 +170,20 @@ class App extends React.Component {
             />
             <RightSide>
               <SortButtons>
-                <SortButton changer={this.toggleTabs('left')} isActive={leftTab} left>
+                <SortButton changer={this.toggleTabs('left')} isActive={mostInexpensive} left>
                   самый дешевый
                 </SortButton>
-                <RightSortButton changer={this.toggleTabs('right')} isActive={leftTab} right>
+                <RightSortButton
+                  changer={this.toggleTabs('right')}
+                  isActive={mostInexpensive}
+                  right
+                >
                   самый быстрый
                 </RightSortButton>
               </SortButtons>
               <Tickets>
-                {sorted.length > 0 ? (
-                  sorted.slice(0, 5).map(el => {
+                {filtered.length > 0 ? (
+                  filtered.slice(0, 5).map(el => {
                     return (
                       <Ticket
                         key={`ticket-${Math.random()}`}
