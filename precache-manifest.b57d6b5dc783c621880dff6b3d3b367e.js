@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "d60ce15d9241a26549672c43812dbf96",
+    "revision": "f9d22202c83ff895c5bcb23315122fe8",
     "url": "/aviasales/index.html"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/aviasales/static/js/2.2c7eb3bc.chunk.js"
   },
   {
-    "revision": "c1d31d051c16133d3bfe",
-    "url": "/aviasales/static/js/main.6b77ea3f.chunk.js"
+    "revision": "2b5d383cf8aac95cf0b3",
+    "url": "/aviasales/static/js/main.6a01c2a1.chunk.js"
   },
   {
     "revision": "6869b8c0c7d5aa8946a5",
