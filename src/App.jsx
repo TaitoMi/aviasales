@@ -47,19 +47,29 @@ class App extends React.Component {
     this.getTickets();
   }
 
-  getSorted = (inexpensive = true) => {
-    const { filtered } = this.state;
-    let sorted = [];
-    if (inexpensive) {
-      sorted = filtered.sort((first, second) => {
-        return first.price - second.price;
+  getTickets = async () => {
+    const id = await axios.get('https://front-test.beta.aviasales.ru/search');
+    const recursion = async (stop = false) => {
+      if (stop) {
+        this.getFiltered();
+        return;
+      }
+      const { tickets } = this.state;
+      let newTickets;
+      try {
+        newTickets = await axios.get(
+          `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
+        );
+      } catch (err) {
+        recursion(false);
+        return;
+      }
+      this.setState({ tickets: [...tickets, ...newTickets.data.tickets] }, () => {
+        this.getFiltered();
+        recursion(newTickets.data.stop);
       });
-    } else {
-      sorted = filtered.sort((first, second) => {
-        return first.segments[0].duration - second.segments[0].duration;
-      });
-    }
-    this.setState({ filtered: sorted });
+    };
+    return recursion(false);
   };
 
   getFiltered = () => {
@@ -86,29 +96,19 @@ class App extends React.Component {
     );
   };
 
-  getTickets = async () => {
-    const id = await axios.get('https://front-test.beta.aviasales.ru/search');
-    const recursion = async (stop = false) => {
-      if (stop) {
-        this.getFiltered();
-        return;
-      }
-      const { tickets } = this.state;
-      let newTickets;
-      try {
-        newTickets = await axios.get(
-          `https://front-test.beta.aviasales.ru/tickets?searchId=${id.data.searchId}`
-        );
-      } catch (err) {
-        recursion(false);
-        return;
-      }
-      this.setState({ tickets: [...tickets, ...newTickets.data.tickets] }, () => {
-        this.getFiltered();
-        recursion(newTickets.data.stop);
+  getSorted = (inexpensive = true) => {
+    const { filtered } = this.state;
+    let sorted = [];
+    if (inexpensive) {
+      sorted = filtered.slice().sort((first, second) => {
+        return first.price - second.price;
       });
-    };
-    return recursion(false);
+    } else {
+      sorted = filtered.slice().sort((first, second) => {
+        return first.segments[0].duration - second.segments[0].duration;
+      });
+    }
+    this.setState({ filtered: sorted });
   };
 
   toggleTabs = side => event => {
