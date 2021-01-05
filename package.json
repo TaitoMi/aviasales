@@ -5,7 +5,7 @@
   "homepage": "https://taitomi.github.io/aviasales",
   "dependencies": {
     "antd": "^3.26.2",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "node-sass": "^4.13.0",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
